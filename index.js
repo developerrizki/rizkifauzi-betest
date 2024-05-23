@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 const app = express()
 const userRoute = require('./routes/user.route')
+const port = process.env.PORT || 5001;
 
 // middleware
 app.use(express.json())
@@ -23,7 +24,7 @@ mongoose
   .then(() => {
     console.log("Connected to database!");
 
-    app.listen(3000, () => {
+    app.listen(port, () => {
       console.log("Server is running on port 3000");
     });
   })
