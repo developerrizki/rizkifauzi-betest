@@ -2,7 +2,8 @@ const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
 const app = express()
-const userRoute = require('./routes/user.route')
+const userRoute = require('./src/routes/user.route')
+const authRoute = require("./src/routes/auth.route");
 const port = process.env.PORT || 5001;
 
 // middleware
@@ -12,10 +13,11 @@ app.use(cors())
 
 // route
 app.get('/', function (req, res) {
-  res.send('Mini application for manage user with authentication jwt')
+  res.send('Microservice for manage user with authentication jwt')
 })
 
 app.use('/api/users', userRoute);
+app.use("/api/auth", authRoute);
 
 mongoose
   .connect(
@@ -25,7 +27,9 @@ mongoose
     console.log("Connected to database!");
 
     app.listen(port, () => {
-      console.log("Server is running on port 3000");
+      console.log("Server is running on port " + port);
     });
   })
   .catch(() => console.log("Connection failed to database"));
+
+module.exports = app  
