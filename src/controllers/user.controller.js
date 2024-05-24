@@ -11,7 +11,13 @@ const {
 let redisClient;
 
 (async () => {
-  redisClient = redis.createClient();
+  redisClient = redis.createClient({
+    url: "rediss://:p2ff8e9baea1d6a448cef9b4208be1ca5a02d5d093d3c7732acc4e07512d2c1ed@ec2-3-211-177-74.compute-1.amazonaws.com:19670",
+    socket: {
+      tls: true,
+      rejectUnauthorized: false,
+    },
+  });
   redisClient.on("error", (error) => console.error(`Error : ${error}`));
   await redisClient.connect();
 })();
