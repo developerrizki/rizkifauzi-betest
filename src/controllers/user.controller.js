@@ -9,6 +9,7 @@ const {
 } = require("../services/user.service");
 
 let redisClient;
+const redisUsers = "redis_rizkifauzi_betest";
 
 (async () => {
   redisClient = redis.createClient({
@@ -23,7 +24,6 @@ let redisClient;
 })();
 
 const getUsers = async (req, res) => {
-  const redisUsers = "redis_rizkifauzi_betest";
   let users;
   try {
     const cacheUsers = await redisClient.get(redisUsers);
@@ -71,6 +71,7 @@ const getUserByIdentityOrAccountNumber = async (req, res) => {
 const storeUser = async (req, res) => {
   try {
     const user = await storeDataUser(req.body)
+    redisClient.del(redisUsers)
     res.status(201).json(user)
   } catch (error) {
     res.status(500).json({ message: error.message })
@@ -85,6 +86,7 @@ const updateUser = async (req, res) => {
       return res.status(404).json({ message: "User not found" })
     }
     const updateUser = await getUserByIdFromDB(id)
+    redisClient.del(redisUsers);
     res.status(201).json(updateUser)
   } catch (error) {
     res.status(500).json({ message: error.message })
@@ -98,6 +100,7 @@ const deleteUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+    redisClient.del(redisUsers);
     res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
