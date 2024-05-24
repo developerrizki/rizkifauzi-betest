@@ -6,6 +6,9 @@ const userRoute = require('./src/routes/user.route')
 const authRoute = require("./src/routes/auth.route")
 const apiVerifyToken = require('./src/middleware/apiVerifyToken')
 const port = process.env.PORT || 5001;
+const msDatabase =
+  process.env.DATABASE_URL ||
+  "mongodb+srv://developerrizki:6Fi0cOlTrKW5K2kU@backenddb.d8korc3.mongodb.net/?retryWrites=true&w=majority&appName=BackendDB";
 
 // middleware
 app.use(express.json())
@@ -31,9 +34,7 @@ app.use('/api/users', userRoute);
 app.use("/api/auth", authRoute);
 
 mongoose
-  .connect(
-    "mongodb+srv://developerrizki:6Fi0cOlTrKW5K2kU@backenddb.d8korc3.mongodb.net/?retryWrites=true&w=majority&appName=BackendDB"
-  )
+  .connect(msDatabase)
   .then(() => {
     console.log("Connected to database!");
 
