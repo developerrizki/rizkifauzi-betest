@@ -1,9 +1,29 @@
 const User = require("../models/user.model")
+const redis = require('redis')
+
+let redisClient;
+
+(async () => {
+  redisClient = redis.createClient();
+  redisClient.on("error", (error) => console.error(`Error : ${error}`));
+  await redisClient.connect();
+})();
 
 const getUsers = async (req, res) => {
+  const redisUsers = "redis_rizkifauzi_betest";
+  let users;
   try {
-    const users = await User.find({})
-    res.status(200).json(users)
+    const cacheUsers = await redisClient.get(redisUsers);
+    if (cacheUsers) {
+      users = JSON.parse(cacheUsers);
+    } else {
+      users = await User.find({});
+      if (users.length === 0) {
+        throw "API returned an empty array";
+      }
+      await redisClient.set(redisUsers, JSON.stringify(users));
+    }
+    res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ message: error.message })
   }
@@ -40,7 +60,7 @@ const getUserByIdentityOrAccountNumber = async (req, res) => {
 const storeUser = async (req, res) => {
   try {
     const user = await User.create(req.body)
-    res.status(200).json(user)
+    res.status(201).json(user)
   } catch (error) {
     res.status(500).json({ message: error.message })
   }
@@ -54,7 +74,7 @@ const updateUser = async (req, res) => {
       return res.status(404).json({ message: "User not found" })
     }
     const updateUser = await User.findById(id)
-    res.status(200).json(updateUser)
+    res.status(201).json(updateUser)
   } catch (error) {
     res.status(500).json({ message: error.message })
   }
