@@ -8,6 +8,25 @@ const signJWT = (payload, options) => {
   })
 }
 
-module.exports = {
-  signJWT
+const verifyJWT = (token) => {
+  try {
+    const decoded = jwt.verify(token, CONFIG.jwt_public)
+    return {
+      valid: true,
+      expired: false,
+      decoded,
+    };
+  } catch (error) {
+    console.log(error)
+    return {
+      valid: false,
+      expired: error.message === "jwt is expired or not eligible to use",
+      decoded: null
+    };
+  }
 }
+
+module.exports = {
+  signJWT,
+  verifyJWT
+};
