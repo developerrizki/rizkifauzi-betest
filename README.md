@@ -8,7 +8,7 @@ This project is a Node.js Express API developed for microservice user management
 - **RESTful Routes**: Implements RESTful routes for handling CRUD operations.
 - **Middleware**: Utilizes middleware for authentication, error handling, and request processing.
 - **Unit Testing**: Includes comprehensive unit tests for ensuring code reliability and functionality.
-- **Database Integration**: Interacts with a database (MongoDB/MySQL/PostgreSQL) for data storage and retrieval.
+- **Database Integration**: Interacts with a database MongoDB for data storage and retrieval.
 - **Environment Configuration**: Utilizes environment variables for configuration, ensuring flexibility and security.
 - **Scalable Architecture**: Designed with scalability in mind, allowing for easy expansion and modification.
 
@@ -47,7 +47,7 @@ This project is a Node.js Express API developed for microservice user management
 - UUID
 - CORS
 - Jest (for unit testing)
-- supertest
+- Supertest
 - JWT (for authentication)
 
 ### Contributing:
