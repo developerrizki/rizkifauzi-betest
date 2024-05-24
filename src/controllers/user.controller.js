@@ -1,5 +1,12 @@
-const User = require("../models/user.model")
-const redis = require('redis')
+const redis = require('redis');
+const {
+  getAllUser,
+  getUserByIdFromDB,
+  getUserByIdentityOrAccountNumberFromDB,
+  storeDataUser,
+  updateDataUser,
+  deleteDataUser
+} = require("../services/user.service");
 
 let redisClient;
 
@@ -17,7 +24,7 @@ const getUsers = async (req, res) => {
     if (cacheUsers) {
       users = JSON.parse(cacheUsers);
     } else {
-      users = await User.find({});
+      users = await getAllUser();
       if (users.length === 0) {
         throw "API returned an empty array";
       }
@@ -32,7 +39,7 @@ const getUsers = async (req, res) => {
 const getUserById = async (req, res) => {
   try {
     const { id } = req.params
-    const user = await User.findById(id)
+    const user = await getUserByIdFromDB(id)
     if (!user) {
       return res.status(404).json({ message: "User not found" })
     }
@@ -45,9 +52,7 @@ const getUserById = async (req, res) => {
 const getUserByIdentityOrAccountNumber = async (req, res) => {
   try {
     const { number } = req.params;
-    const user = await User.findOne({
-      $or: [{ identityNumber: number }, { accountNumber: number }],
-    });
+    const user = await getUserByIdentityOrAccountNumberFromDB(number);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -59,7 +64,7 @@ const getUserByIdentityOrAccountNumber = async (req, res) => {
 
 const storeUser = async (req, res) => {
   try {
-    const user = await User.create(req.body)
+    const user = await storeDataUser(req.body)
     res.status(201).json(user)
   } catch (error) {
     res.status(500).json({ message: error.message })
@@ -69,11 +74,11 @@ const storeUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const { id } = req.params
-    const user = await User.findByIdAndUpdate(id, req.body)
+    const user = await updateDataUser(id, req.body)
     if (!user) {
       return res.status(404).json({ message: "User not found" })
     }
-    const updateUser = await User.findById(id)
+    const updateUser = await getUserByIdFromDB(id)
     res.status(201).json(updateUser)
   } catch (error) {
     res.status(500).json({ message: error.message })
@@ -83,7 +88,7 @@ const updateUser = async (req, res) => {
 const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await User.findByIdAndDelete(id);
+    const user = await deleteDataUser(id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
